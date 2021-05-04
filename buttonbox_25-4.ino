@@ -1,3 +1,15 @@
+/* Simple buttonbox sketch
+ *
+ * Supports up to 25 buttons and up to 4 encoders (if encoders have capabilities, they count also as one of the 25 buttons if connected properly)
+ *
+ * Version 0.1 by Rhundesign, based on the work done by XSimulator user TOPMO3
+ *
+ *
+ * Requirements
+ * Arduino IDE 1.6.6 (or above)
+ * Joystick library from  Matthew Heironimus, https://github.com/MHeironimus/ArduinoJoystickLibrary
+ */
+
 /* Includes */
 #include <Keypad.h>
 #include <Joystick.h>
@@ -9,6 +21,7 @@
 #define NUMROWS 5
 #define NUMCOLS 5
 
+/* Define the Button Matrix */
 byte buttons[NUMROWS][NUMCOLS] = {
   {0,1,2,3,4},
   {5,6,7,8,9},
@@ -17,6 +30,7 @@ byte buttons[NUMROWS][NUMCOLS] = {
   {20,21,22,23,24},
 };
 
+/* Define the rotary encoder object structure */
 struct rotariesdef {
   byte pin1;
   byte pin2;
@@ -25,6 +39,7 @@ struct rotariesdef {
   volatile unsigned char state;
 };
 
+/* Define the four rotary encoders */
 rotariesdef rotaries[NUMROTARIES] {
   {0,1,26,27,0},
   {2,3,28,29,0},
