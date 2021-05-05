@@ -21,32 +21,39 @@
 #define NUMROWS 5
 #define NUMCOLS 5
 
-/* Define the Button Matrix */
+/* SIMPLE BUTTONS */
+/* Define the matrix for the on/off buttons */
 byte buttons[NUMROWS][NUMCOLS] = {
-  {0,1,2,3,4},
-  {5,6,7,8,9},
-  {10,11,12,13,14},
-  {15,16,17,18,19},
-  {20,21,22,23,24},
+  {0,1,2,3,4}, // row 1
+  {5,6,7,8,9}, // row 2
+  {10,11,12,13,14}, // row 3
+  {15,16,17,18,19}, // row 4
+  {20,21,22,23,24}, // row 5
 };
 
+/* Define the PCB pins where this matrix will be connected */
+byte rowPins[NUMROWS] = {21,20,19,18,15}; // define row pins
+byte colPins[NUMCOLS] = {14,16,10,9,8}; // define column pins
+
+/* ROTARY ENCODERS */
 /* Define the rotary encoder object structure */
 struct rotariesdef {
-  byte pin1;
-  byte pin2;
-  int ccwchar;
-  int cwchar;
-  volatile unsigned char state;
+  byte pin1; // pin 1
+  byte pin2; // pin 2
+  int ccwchar; // counter clockwise virtual button
+  int cwchar; // clockwise virtual button
+  volatile unsigned char state; // encoder state
 };
 
 /* Define the four rotary encoders */
 rotariesdef rotaries[NUMROTARIES] {
-  {0,1,26,27,0},
-  {2,3,28,29,0},
-  {4,5,30,31,0},
-  {6,7,32,33,0},
+  {0,1,26,27,0}, // encoder 1 values
+  {2,3,28,29,0}, // encoder 2 values
+  {4,5,30,31,0}, // encoder 3 values
+  {6,7,32,33,0}, // encoder 4 values
 };
 
+/* Define encoder directions and states */
 #define DIR_CCW 0x10
 #define DIR_CW 0x20
 #define R_START 0x0
@@ -59,25 +66,16 @@ rotariesdef rotaries[NUMROTARIES] {
 #define R_CCW_NEXT 0x6
 
 const unsigned char ttable[7][4] = {
-  // R_START
-  {R_START,    R_CW_BEGIN,  R_CCW_BEGIN, R_START},
-  // R_CW_FINAL
-  {R_CW_NEXT,  R_START,     R_CW_FINAL,  R_START | DIR_CW},
-  // R_CW_BEGIN
-  {R_CW_NEXT,  R_CW_BEGIN,  R_START,     R_START},
-  // R_CW_NEXT
-  {R_CW_NEXT,  R_CW_BEGIN,  R_CW_FINAL,  R_START},
-  // R_CCW_BEGIN
-  {R_CCW_NEXT, R_START,     R_CCW_BEGIN, R_START},
-  // R_CCW_FINAL
-  {R_CCW_NEXT, R_CCW_FINAL, R_START,     R_START | DIR_CCW},
-  // R_CCW_NEXT
-  {R_CCW_NEXT, R_CCW_FINAL, R_CCW_BEGIN, R_START},
+  {R_START,    R_CW_BEGIN,  R_CCW_BEGIN, R_START}, // R_START
+  {R_CW_NEXT,  R_START,     R_CW_FINAL,  R_START | DIR_CW}, // R_CW_FINAL
+  {R_CW_NEXT,  R_CW_BEGIN,  R_START,     R_START}, // R_CW_BEGIN
+  {R_CW_NEXT,  R_CW_BEGIN,  R_CW_FINAL,  R_START}, // R_CW_NEXT
+  {R_CCW_NEXT, R_START,     R_CCW_BEGIN, R_START}, // R_CCW_BEGIN
+  {R_CCW_NEXT, R_CCW_FINAL, R_START,     R_START | DIR_CCW}, // R_CCW_FINAL
+  {R_CCW_NEXT, R_CCW_FINAL, R_CCW_BEGIN, R_START}, // R_CCW_NEXT
 };
 
-byte rowPins[NUMROWS] = {21,20,19,18,15}; //connect to the row pinouts of the keypad
-byte colPins[NUMCOLS] = {14,16,10,9,8}; //connect to the column pinouts of the keypad
-
+/* JOYSTICK */
 /* Initialize an instance of class Keypad */
 Keypad buttbx = Keypad( makeKeymap(buttons), rowPins, colPins, NUMROWS, NUMCOLS); 
 
@@ -86,6 +84,8 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
   JOYSTICK_TYPE_JOYSTICK, 34, 0,
   false, false, false, false, false, false,
   false, false, false, false, false);
+
+/* START FUNCTIONING */
 
 void setup() {
   Joystick.begin();
@@ -108,6 +108,7 @@ void rotary_init() {
   }
 }
 
+/* Function to check encoder states */
 void CheckAllEncoders(void) {
   for (int i=0;i<NUMROTARIES;i++) {
     unsigned char result = rotary_process(i);
@@ -120,6 +121,7 @@ void CheckAllEncoders(void) {
   }
 }
 
+/* Function to check button states */
 void CheckAllButtons(void) {
   if (buttbx.getKeys()) {
     for (int i=0; i<LIST_MAX; i++) {   // Scan the whole key list.
@@ -139,6 +141,7 @@ void CheckAllButtons(void) {
   }
 }
 
+/* Function to assign encoder states */
 unsigned char rotary_process(int _i) {
   unsigned char pinstate = (digitalRead(rotaries[_i].pin2) << 1) | digitalRead(rotaries[_i].pin1);
   rotaries[_i].state = ttable[rotaries[_i].state & 0xf][pinstate];
