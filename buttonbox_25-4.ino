@@ -79,11 +79,21 @@ const unsigned char ttable[7][4] = {
 /* Initialize an instance of class Keypad */
 Keypad buttbx = Keypad( makeKeymap(buttons), rowPins, colPins, NUMROWS, NUMCOLS); 
 
-/* Initialize a Joystick controller with 34 buttons */
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, 
-  JOYSTICK_TYPE_JOYSTICK, 34, 0,
-  false, false, false, false, false, false,
-  false, false, false, false, false);
+/* Initialize a Joystick controller with 34 buttons and no axis */
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK,
+  34, // button count
+  0, // Hat switch (POV) count
+  false, // X axis
+  false, // Y azis
+  false, // Z axis
+  false, // Rx axis
+  false, // Ry axis
+  false, // Rz axis
+  false, // Rudder axis
+  false, // Throttle axis
+  false, // Accelerator axis
+  false, // Brake axis
+  false); // Steering axis
 
 /* START FUNCTIONING */
 
