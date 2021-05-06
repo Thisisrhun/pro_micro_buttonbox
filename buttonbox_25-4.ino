@@ -1,6 +1,6 @@
 /* Simple buttonbox sketch
  *
- * Supports up to 25 buttons and up to 4 encoders (if encoders have capabilities, they count also as one of the 25 buttons if connected properly)
+ * Supports up to 25 buttons and up to 4 encoders (if encoders have a clicking capability, they count also as one of the 25 buttons if connected properly)
  *
  * Version 0.1 by Rhundesign, based on the work done by XSimulator user TOPMO3
  *
